@@ -1,0 +1,20 @@
+{
+  "name": "Rooftop Rush",
+  "short_name": "Rooftop Rush",
+  "description": "Rooftop Rush is a free 3D rooftop runner. Play as Jane the courier, carry the Lantern Key across Harbor City, dodge Helix drones and bring the lights back on.",
+  "id": "./",
+  "start_url": "./index.html",
+  "scope": "./",
+  "display": "fullscreen",
+  "display_override": ["fullscreen", "standalone", "minimal-ui"],
+  "orientation": "any",
+  "background_color": "#f4f7fa",
+  "theme_color": "#f4f7fa",
+  "categories": ["games", "entertainment"],
+  "lang": "en",
+  "icons": [
+    { "src": "rooftop-rush.png", "sizes": "512x512", "type": "image/png", "purpose": "any" },
+    { "src": "rooftop-rush.png", "sizes": "192x192", "type": "image/png", "purpose": "any" },
+    { "src": "rooftop-rush.png", "sizes": "512x512", "type": "image/png", "purpose": "maskable" }
+  ]
+}

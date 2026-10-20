@@ -1,0 +1,203 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no, viewport-fit=cover">
+<meta name="theme-color" content="#f4f7fa">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="default">
+<meta name="apple-mobile-web-app-title" content="Rooftop Rush">
+<title>Rooftop Rush — Free 3D Rooftop Runner Game | Play as Jane the Courier</title>
+<meta name="description" content="Rooftop Rush is a free 3D rooftop runner game. Play as Jane the courier: carry the Lantern Key across the rooftops of Harbor City, jump the barriers, slide under the Helix drones, collect coins and bring the city's lights back on. 4 story chapters plus Endless Night Shift. Plays on mobile and desktop — installable as an app.">
+<meta name="keywords" content="rooftop rush, 3d runner game, endless runner, free browser game, play rooftop rush online, mobile runner game, webgl game, three.js game, jane courier, lantern key, harbor city, single player arcade game, installable web game, pwa game">
+<meta name="author" content="Rooftop Rush">
+<meta name="robots" content="index,follow,max-image-preview:large">
+<link rel="canonical" href="https://github.com/Samanway-Koley/rooftop-rush">
+<meta property="og:type" content="website">
+<meta property="og:site_name" content="Rooftop Rush">
+<meta property="og:title" content="Rooftop Rush — 3D Rooftop Runner Game">
+<meta property="og:description" content="Carry the Lantern Key across Harbor City. A free 3D story runner for mobile and desktop — jump, slide and turbo past the Helix drones.">
+<meta property="og:url" content="https://github.com/Samanway-Koley/rooftop-rush">
+<meta property="og:image" content="https://github.com/Samanway-Koley/rooftop-rush/rooftop-rush.png">
+<meta property="og:image:width" content="512">
+<meta property="og:image:height" content="512">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:title" content="Rooftop Rush — 3D Rooftop Runner Game">
+<meta name="twitter:description" content="Carry the Lantern Key across Harbor City. Free 3D story runner for mobile and desktop.">
+<meta name="twitter:image" content="https://github.com/Samanway-Koley/rooftop-rush/rooftop-rush.png">
+<script type="application/ld+json">
+{"@context":"https://schema.org","@graph":[
+ {"@type":"VideoGame","name":"Rooftop Rush","url":"https://github.com/Samanway-Koley/rooftop-rush","image":"https://github.com/Samanway-Koley/rooftop-rushrooftop-rush.png","description":"Rooftop Rush is a free 3D rooftop endless runner. Play as Jane the courier carrying the Lantern Key through Harbor City, dodging Helix Corp drones and restoring the city's power one rooftop at a time.","genre":["Action","Arcade","Endless Runner"],"gamePlatform":"Web Browser","playMode":"SinglePlayer","applicationCategory":"Game","operatingSystem":"Any","inLanguage":"en","offers":{"@type":"Offer","price":"0","priceCurrency":"USD"}},
+ {"@type":"WebSite","name":"Rooftop Rush","url":"https://github.com/Samanway-Koley/rooftop-rush"}
+]}
+</script>
+<noscript>
+  <div style="position:fixed;inset:0;z-index:99;background:#f4f7fa;display:flex;align-items:center;justify-content:center;padding:24px;text-align:center;font:600 16px/1.5 system-ui;color:#132030">
+    Rooftop Rush needs JavaScript to run.<br>Please enable JavaScript in your browser, then reload.
+  </div>
+</noscript>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="preconnect" href="https://cdn.jsdelivr.net" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Archivo:wght@700;800;900&family=Inter:wght@500;600;700;800&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="./styles.css">
+<link rel="icon" type="image/png" href="rooftop-rush.png">
+<link rel="shortcut icon" href="rooftop-rush.png">
+<link rel="apple-touch-icon" href="rooftop-rush.png">
+<script type="importmap">
+{ "imports": {
+  "three": "https://cdn.jsdelivr.net/npm/three@0.160.0/build/three.module.js",
+  "three/addons/": "https://cdn.jsdelivr.net/npm/three@0.160.0/examples/jsm/"
+} }
+</script>
+</head>
+<body>
+<div id="app">
+  <canvas id="gl"></canvas>
+  <div class="fx" id="speedfx"></div>
+  <div class="fx" id="hurtfx"></div>
+  <div class="fx" id="flash"></div>
+  <div class="fx" id="vig"></div>
+  <div id="ftl"></div>
+
+  <!-- HUD -->
+  <div id="hud">
+    <div class="topbar">
+      <div class="hl glass">
+        <div class="ava"><canvas id="ava" width="128" height="128"></canvas></div>
+        <div><div id="hname">JANE</div><div id="hearts"></div></div>
+        <svg id="shield-ind" viewBox="0 0 24 24"><path d="M12 2l8 3v6c0 5-3.4 9.3-8 11-4.6-1.7-8-6-8-11V5z" fill="#13b5c8"/><path d="M12 5l5 2v4c0 3.4-2.1 6.3-5 7.6z" fill="#7fe6f2"/></svg>
+      </div>
+      <div class="obj glass" id="obj">
+        <div class="obj-row"><span class="ic" id="obj-ic"></span><span id="obj-t">Objective</span><b id="obj-v">0</b></div>
+        <div class="obj-bar"><i id="obj-fill"></i></div>
+      </div>
+      <div class="hr">
+        <div class="scorebox glass">
+          <div id="dist">0<small>M</small></div>
+          <div class="coinrow"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="10" fill="#f5b324"/><circle cx="12" cy="12" r="7" fill="#ffd66b"/><path d="M12 7.5l1.4 2.9 3.1.4-2.3 2.1.6 3.1L12 14.5l-2.8 1.5.6-3.1-2.3-2.1 3.1-.4z" fill="#d68a0c"/></svg><b id="coins">0</b></div>
+        </div>
+        <button class="sysbtn glass" id="btn-pause" aria-label="Pause"><svg viewBox="0 0 24 24" fill="currentColor"><rect x="6" y="5" width="4.2" height="14" rx="1.8"/><rect x="13.8" y="5" width="4.2" height="14" rx="1.8"/></svg></button>
+      </div>
+    </div>
+    <div id="mult">×2</div>
+    <div class="turbo glass" id="turbo">
+      <div class="tcap"><span>TURBO</span><b id="tpct">0%</b></div>
+      <div class="tbar"><i id="tfill"></i></div>
+      <div class="hint" id="thint">SHIFT · TURBO DASH</div>
+    </div>
+    <button id="turbo-btn" aria-label="Turbo">TURBO</button>
+    <div id="comms" class="glass" aria-live="polite">
+      <div class="cm-ava">MK</div>
+      <div style="min-width:0;flex:1"><div class="cm-who"><i></i>MIKA · DISPATCH</div><div id="cm-text"></div></div>
+    </div>
+  </div>
+  <div id="toast"></div>
+
+  <!-- TITLE -->
+  <section class="screen" id="title">
+    <div class="logo">
+      <span class="lemblem" role="img" aria-label="Rooftop Rush logo"></span>
+      <div class="lpill">HARBOR CITY · THE LANTERN KEY</div>
+      <h1 class="ltitle">ROOFTOP<span>RUSH</span></h1>
+      <div class="lmeta">
+        <span class="lchip"><i></i>RUNNER · <b id="logo-name">JANE</b></span>
+        <span class="lchip">CHAPTER <span id="logo-ch">1</span> / 4</span>
+      </div>
+      <p class="ltag">Run the rooftops, recover the Lantern Shards and bring the power back before Helix Corp owns the night.</p>
+    </div>
+    <div class="tpanel glass">
+      <div class="wallet">
+        <div class="wchip"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="10" fill="#f5b324"/><circle cx="12" cy="12" r="7" fill="#ffd66b"/></svg><span><small>COINS</small><span id="w-coins">0</span></span></div>
+        <div class="wchip"><svg viewBox="0 0 24 24"><path d="M12 2l6 7-6 13L6 9z" fill="#13b5c8"/><path d="M12 2l6 7H6z" fill="#7fe6f2"/></svg><span><small>SHARDS</small><span id="w-shards">0</span></span></div>
+        <div class="wchip"><svg viewBox="0 0 24 24"><path d="M12 2l2.6 6.2 6.7.5-5.1 4.4 1.6 6.5L12 16.1 6.2 19.6l1.6-6.5L2.7 8.7l6.7-.5z" fill="#f5b324"/></svg><span><small>STARS</small><span id="w-stars">0</span></span></div>
+      </div>
+      <button class="btn" id="btn-story"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M8 5l11 7-11 7z"/></svg><span id="story-label">STORY · CHAPTER 1</span></button>
+      <div style="height:8px"></div>
+      <button class="btn dark" id="btn-endless">ENDLESS · NIGHT SHIFT <small id="endless-best"></small></button>
+      <div class="sec">CHAPTERS</div>
+      <div class="chapters" id="chapters"></div>
+      <div class="sec">RUNNER</div>
+      <div class="pilots">
+        <div class="rcard"><canvas id="snap-jane" width="320" height="272"></canvas><div class="rn">JANE<small>Courier · Harbor Division</small></div></div>
+      </div>
+      <p class="runner-note">You play as <b>Jane</b> in every mission</p>
+      <div class="tfoot">
+        <button class="btn ghost" id="btn-sound"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round"><path d="M11 5 6 9H3v6h3l5 4z" fill="currentColor" stroke="none"/><path d="M15.5 8.5a5 5 0 0 1 0 7"/></svg><span id="snd-label">SOUND ON</span></button>
+        <button class="btn ghost" id="btn-dev"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 2A10 10 0 0 0 8.84 21.5c.5.08.66-.23.66-.5v-1.7c-2.78.6-3.37-1.34-3.37-1.34-.45-1.16-1.11-1.47-1.11-1.47-.9-.62.07-.6.07-.6 1 .07 1.53 1.03 1.53 1.03.9 1.52 2.34 1.08 2.91.83.09-.65.35-1.09.63-1.34-2.22-.25-4.56-1.11-4.56-4.95 0-1.1.39-2 1.03-2.71-.1-.25-.45-1.29.1-2.64 0 0 .84-.27 2.75 1.02a9.6 9.6 0 0 1 5 0c1.91-1.29 2.75-1.02 2.75-1.02.55 1.35.2 2.39.1 2.64.64.71 1.03 1.61 1.03 2.71 0 3.85-2.35 4.7-4.58 4.94.36.31.68.92.68 1.85V21c0 .27.16.59.67.5A10 10 0 0 0 12 2z"/></svg>GITHUB</button>
+      </div>
+      <button class="btn ghost" id="btn-install"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3v12M7 10l5 5 5-5M5 21h14"/></svg>INSTALL APP</button>
+      <div class="bestline">BEST ENDLESS · <b id="best-n">—</b></div>
+    </div>
+  </section>
+
+  <!-- INTRO CARD -->
+  <section class="screen" id="intro">
+    <div class="icard">
+      <div class="num" id="i-num">CHAPTER 1</div>
+      <div class="ttl" id="i-ttl">THE DROP</div>
+      <div class="sb" id="i-sb">MORNING · HARBOR ROOFTOPS</div>
+      <div class="goal" id="i-goal">Reach the Signal Relay · 700 m</div>
+      <div class="tap">TAP OR PRESS SPACE TO RUN</div>
+    </div>
+  </section>
+
+  <!-- PAUSE -->
+  <section class="screen" id="pause">
+    <div class="panel" style="text-align:center">
+      <div class="kick">PAUSED</div>
+      <div class="h1">Catch your breath</div>
+      <p class="p" id="pause-obj" style="margin:6px 0 18px">The rooftops will wait.</p>
+      <button class="btn" id="btn-resume">KEEP RUNNING</button>
+      <div style="height:8px"></div>
+      <div class="row"><button class="btn ghost" id="btn-restart">RESTART</button><button class="btn ghost" id="btn-menu">MENU</button></div>
+      <p class="p" style="margin-top:14px;font-size:12px">◀ ▶ lanes · SPACE jump · ▼ slide · SHIFT turbo</p>
+    </div>
+  </section>
+
+  <!-- RESULT -->
+  <section class="screen" id="result">
+    <div class="panel">
+      <div class="kick" id="r-kick" style="text-align:center">CHAPTER CLEAR</div>
+      <div class="h1" id="r-title" style="text-align:center">The Drop</div>
+      <div id="r-stars"></div>
+      <div id="r-big">0<small> M</small></div>
+      <div id="r-sub">BEST <b id="r-best">0</b></div>
+      <p class="p" id="r-story"></p>
+      <div class="stats">
+        <div class="stat"><small>COINS</small><b id="r-coins">0</b></div>
+        <div class="stat"><small>HITS</small><b id="r-hits">0</b></div>
+        <div class="stat"><small>TIME</small><b id="r-time">0s</b></div>
+      </div>
+      <button class="btn" id="r-primary">NEXT CHAPTER</button>
+      <div style="height:8px"></div>
+      <div class="row"><button class="btn ghost" id="r-secondary">RETRY</button><button class="btn ghost" id="r-menu">MENU</button></div>
+    </div>
+  </section>
+
+  <!-- INSTALL MODAL -->
+  <div id="modal">
+    <div class="panel">
+      <div class="kick">INSTALL</div>
+      <div class="h1" style="font-size:26px">Add to Home Screen</div>
+      <div class="steps" id="modal-steps"></div>
+      <button class="btn dark" id="modal-close">GOT IT</button>
+    </div>
+  </div>
+
+  <!-- LOADER -->
+  <div id="loader">
+    <span class="lemblem" role="img" aria-label="Rooftop Rush logo"></span>
+    <div class="nm">ROOFTOP<small>RUSH</small></div>
+    <div class="bar"><i id="ld-fill"></i></div>
+    <div class="msg" id="ld-msg">LOADING HARBOR CITY · 0%</div>
+    <div class="tip">Tip: hold jump for a higher leap. Slide under Helix drones.</div>
+    <div class="err" id="ld-err"></div>
+  </div>
+</div>
+
+<script src="./game.js"></script>
+<script src="./boot-check.js" defer></script>
+</body>
+</html>
