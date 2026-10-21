@@ -14,6 +14,11 @@ Rooftop Rush is a free 3D rooftop runner for mobile and desktop. You are **Jane*
 
 ---
 
+<img width="2880" height="1384" alt="image" src="https://github.com/user-attachments/assets/38a21ca1-e2f0-4098-871a-f7253f5c5fd2" />
+
+---
+
+
 ## ✨ Features
 
 - **Four story chapters** — Run Jane's route through Harbor City, starting with Chapter 1, "The Drop," where the goal is to reach the Signal Relay 700 m away.
